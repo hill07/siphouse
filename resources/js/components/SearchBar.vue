@@ -87,7 +87,7 @@ watch(query, (newQuery) => {
       results.value = Array.isArray(response.data) ? response.data.slice(0, 10) : [];
       showDropdown.value = results.value.length > 0;
     } catch (err) {
-      console.error(err);
+      // Error handled via loading state or silent failure in production
     } finally {
       loading.value = false;
     }
