@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AMC Extractor</title>
+</head>
+<body>
+
+<h2>Upload AMFI Text File</h2>
+<input type="file" id="fileInput" />
+<br><br>
+<button onclick="processFile()">Extract AMC List</button>
+
+<p id="result"></p>
+
+<script>
+function processFile() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please upload amfi.txt file");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const text = e.target.result;
+
+        const lines = text.split("\n");
+
+        const amcSet = new Set();
+
+        lines.forEach(line => {
+            line = line.trim();
+
+            if (
+                line.includes("Asset Management") ||
+                line.includes("AMC Limited") ||
+                line.includes("Investment Managers")
+            ) {
+                amcSet.add(line);
+            }
+        });
+
+        const uniqueAMCs = Array.from(amcSet).sort();
+
+        const blob = new Blob([uniqueAMCs.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "clean_fundhouses.txt";
+        a.click();
+
+        document.getElementById("result").innerText =
+            "Total Unique AMC Found: " + uniqueAMCs.length;
+    };
+
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>
